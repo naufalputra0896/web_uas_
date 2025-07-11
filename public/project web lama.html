@@ -1,0 +1,855 @@
+<?php
+session_start();
+if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true) {
+    header('Location: index.php');
+    exit;
+}
+$error = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
+    // Ganti dengan validasi ke database jika perlu
+    if ($username === 'admin' && $password === 'admin') {
+        $_SESSION['logged_in'] = true;
+        header('Location: index.php');
+        exit;
+    } else {
+        $error = 'Username atau password salah!';
+    }
+}
+?>
+<?php require_once __DIR__ . '/../src/track_visitor.php'; ?>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Joupit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="/js/main.js"></script>
+    <script>
+      function setActive(el) {
+    document.querySelectorAll("#nav-menu .nav-link").forEach((link) => {
+      link.classList.remove("active");
+    });
+    el.classList.add("active");
+      } 
+          function toggleMenu() {
+            document.getElementById("mobile-menu").classList.toggle("active");
+      }
+      function setMobileActive(el) {
+        document.querySelectorAll('#mobile-menu .nav-link').forEach(link => {
+        link.classList.remove('active');
+      });
+    el.classList.add('active');
+    toggleMenu();}
+    // Buka gambar saat diklik
+          function openModal(src) {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    modalImg.src = src;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');}
+    // Tutup gambar saat diklik
+  function closeModal() {
+    const modal = document.getElementById('imageModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.getElementById('modalImage').src = '';
+  }
+  // Tambahkan event ke semua gambar produk
+  window.onload = () => {
+    document.querySelectorAll("section#Produk img").forEach(img => {
+      img.classList.add("cursor-pointer");
+      img.addEventListener("click", () => openModal(img.src));
+    });
+  };
+  window.onload = () => {
+    document.querySelectorAll("section#Produk img").forEach(img => {
+      img.classList.add("cursor-pointer");
+      img.addEventListener("click", () => openModal(img.src));
+    });
+  };
+    document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("loginForm");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    const username = form.username.value;
+    const password = form.password.value;
+
+    // Ganti dengan username & password sesuai keinginan
+    if (username === "admin" && password === "admin") {
+      alert("Login berhasil!");
+      document.getElementById("loginSection").style.display = "none";
+      document.getElementById("mainContent").classList.remove("hidden");
+    } else {
+      alert("Login gagal: Username atau password salah");
+    }
+  });
+});
+    </script>
+    <style>
+      .nav-link {
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      .nav-link:hover {
+        background-color: #1d4ed8; 
+      }
+
+      html {
+        scroll-behavior: smooth; 
+      }
+
+      /* tampilan di mobile hp styling */
+      .mobile-menu {
+        display: none;
+      }
+
+      .mobile-menu.active {
+        display: block;
+      }
+      .nav-link.active {
+        background-color: #1d4ed8; 
+        color: white; 
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <div id="mainContent" class="hidden"></div>
+    <section id="loginSection" class="min-h-screen flex items-center justify-center">
+    <form id="loginForm" class="bg-white p-6 rounded-lg shadow-md w-80">
+      <h2 class="text-2xl font-bold text-center mb-4 text-blue-800">Login</h2>
+      <input type="text" name="username" placeholder="Username" required
+             class="w-full mb-3 px-3 py-2 border rounded"/>
+      <input type="password" name="password" placeholder="Password" required
+             class="w-full mb-3 px-3 py-2 border rounded"/>
+      <button type="submit"
+              class="w-full bg-blue-800 text-white py-2 rounded hover:bg-blue-600">Login</button>
+    </form>
+    </section>
+    <div id="imageModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-blue bg-opacity-80">
+    <div class="relative max-w-3xl w-full">
+    <button onclick="closeModal()" class="absolute top-2 right-2 text-blue text-2xl font-bold z-50">&times;</button>
+    <img id="modalImage" src="" class="w-full h-auto rounded-lg mx-auto" />
+    </div>
+    </div>
+    <header class="bg-white shadow">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center"
+      >
+        <div class="text-xl font-bold text-blue-800">
+          <img src="img/logo.jpeg" alt="Logo" class="h-8 inline-block mr-2" />
+          Joupit
+        </div>
+        <nav class="hidden lg:flex space-x-4 text-gray-600" id="nav-menu">
+          <a href="#Sekilas Toko" class="nav-link" onclick="setActive(this)"
+            >Sekilas Toko</a
+          >
+          <a href="#Produk" class="nav-link" onclick="setActive(this)"
+            >Produk</a
+          >
+          <a href="#Layanan" class="nav-link" onclick="setActive(this)"
+            >Layanan</a
+          >
+          <a href="#Tentang Kami" class="nav-link" onclick="setActive(this)"
+            >Tentang Kami</a
+          >
+        </nav>
+        <button class="lg:hidden text-gray-600" onclick="toggleMenu()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16m-7 6h7"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="mobile-menu bg-white shadow-lg p-4 lg:hidden">
+      <a href="#Sekilas" class="block nav-link" onclick="setMobileActive(this)">Sekilas Toko</a>
+      <a href="#Produk" class="block nav-link" onclick="setMobileActive(this)">Produk</a>
+      <a href="#Layanan" class="block nav-link" onclick="setMobileActive(this)">Layanan</a>
+      <a href="#Tentang Kami" class="block nav-link" onclick="setMobileActive(this)">Tentang Kami</a>
+      <a href="https://wa.me/+6289665763920" target="_blank" class="block nav-link bg-blue-600 text-white mt-4 hover:bg-blue-600 flex items-center justify-left space-x-2 rounded-lg py-2 px-4">
+      <img src="img/logo wa.png" alt="WhatsApp" class="h-5 w-5" />
+      <span>WhatsApp</span> </a>
+      <div
+        id="mobile-menu"
+        class="mobile-menu bg-white shadow-lg p-4 lg:hidden"
+      >
+        <a
+          href="#Sekilas Toko"
+          class="block nav-link hover:text-blue-500"
+          onclick="toggleMenu()"
+        >
+          Sekilas Toko
+        </a>
+        <a
+          href="#Produk"
+          class="block nav-link hover:text-blue-500"
+          onclick="toggleMenu()"
+        >
+          Produk
+        </a>
+        <a
+          href="#Layanan"
+          class="block nav-link hover:text-blue-500"
+          onclick="toggleMenu()"
+        >
+          Layanan
+        </a>
+        <a
+          href="#Tentang Kami"
+          class="block nav-link hover:text-blue-500"
+          onclick="toggleMenu()"
+        >
+          Tentang Kami
+        </a>
+        <a
+          href="https://wa.me/+6289665763920"
+          target="_blank"
+          class="block nav-link bg-green-500 text-white mt-4 hover:bg-green-600"
+        >
+          Klik Disini Untuk Pemesanan
+        </a>
+      </div>
+    </header>
+
+    <!-- Home Section -->
+    <section id="Sekilas Toko" class="bg-white py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <h2 class="text-4xl font-extrabold text-blue-800">
+            Selamat Datang di Joupit
+          </h2>
+          <p class="mt-4 text-gray-500">
+            Toko outpit dengan rating terbaik di masa kini dan terpercaya.
+            Tujuan kami adalah untuk menunjang para generasi milenial agar
+            tampil lebih kece dan menarik. Telah melayani 100000+ order baik
+            online maupun offline. Temukan apa yang kami tawarkan untuk Gen Z.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sepatu Section -->
+    <section id="Produk" class="bg-gray-50 py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-blue-800 text-center">
+          Produk Tersedia
+        </h2>
+        <p class="mt-4 text-gray-500 text-center text-2xl">Sepatu Casual</p>
+        <div class="mt-8 grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          <!-- Product 1 -->
+          <div class="bg-white shadow-lg rounded-lg p-4">
+            <img
+              src="img/foto1.jpg"
+              alt="Product 1"
+              class="w-full h-48 object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+              onclick="openModal(this.src)"
+            />
+            <h3 class="mt-4 text-xl font-bold text-blue-800">
+              Adidas Samba Series
+            </h3>
+            <p class="mt-2 text-gray-500">
+              Salah satu Produk Adidas yang paling terkenal adalah sepatu, contohnya adalah Adidas Spezial yang kini banyak sekali digemari oleh orang orang dari anak anak, dewasa hingga orang tua karena desain yang klasik menjadi salah satu alasan mengapa sepatu ini digemari lintas generasi. Produk ini terinspirasi oleh sejarah dan budaya olahraga, musik, dan pastinya fashion yang dijadikan sepasang sepatu yang klasik dan berkualitas dan di pakai di kalangan manapun.Adidas ini cocok digunakan pada saat berolahraga,coffe shop dan santai. Biasanya sering digunakan dikalangan remaja hingga orang tua sekalipun. cocok digunakan di kalangan usia muda maupun tua. Sol karet memberikan daya cengkeram yang baik. Detail tambahan yang terinspirasi oleh sejarah klub menambah nilai koleksi bagi penggemar Liverpool.
+            </p>
+            <a
+              href="https://wa.me/+6289665763920"
+              target="_blank"
+              class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+            >
+              Klik Beli Disini
+            </a>
+          </div>
+
+          <!-- Product 2 -->
+          <div class="bg-white shadow-lg rounded-lg p-4">
+            <img
+                src="img/foto2.jpg"
+                alt="Product 2"
+                class="w-full h-48 object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+                onclick="openModal(this.src)"
+              />
+            <h3 class="mt-4 text-xl font-bold text-blue-800">
+              Adidas Spezial Series
+            </h3>
+            <p class="mt-2 text-gray-500">
+              Salah satu Produk Adidas yang paling terkenal adalah sepatu,
+              contohnya adalah Adidas Spezial yang kini banyak sekali digemari
+              oleh orang orang dari anak anak, dewasa hingga orang tua karena
+              desain yang klasik menjadi salah satu alasan mengapa sepatu ini
+              digemari lintas generasi. Produk ini terinspirasi oleh sejarah dan
+              budaya olahraga, musik, dan pastinya fashion yang dijadikan
+              sepasang sepatu yang klasik dan berkualitas dan di pakai di
+              kalangan manapun.Adidas ini cocok digunakan pada saat berolahraga,coffe shop dan santai. Biasanya sering digunakan dikalangan remaja hingga orang tua sekalipun.
+              cocok digunakan di kalangan usia muda maupun tua. Sol karet memberikan daya cengkeram yang baik. Detail tambahan yang terinspirasi oleh sejarah klub menambah nilai koleksi bagi penggemar Liverpool.
+            </p>
+            <a
+              href="https://wa.me/+6289665763920"
+              target="_blank"
+              class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+            >
+              Klik Beli Disini
+            </a>
+          </div>
+
+          <!-- Product 3 -->
+          <div class="bg-white shadow-lg rounded-lg p-4">
+            <img
+              src="img/foto3.jpg"
+              alt="Product 3"
+              class="w-full h-48 object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+              onclick="openModal(this.src)"
+            />
+            <h3 class="mt-4 text-xl font-bold text-blue-800">
+              Adidas Liverpool Series
+            </h3>
+            <p class="mt-2 text-gray-500">
+              Salah satu Produk Adidas yang paling terkenal adalah sepatu, contohnya adalah Adidas Spezial yang kini banyak sekali digemari oleh orang orang dari anak anak, dewasa hingga orang tua karena desain yang klasik menjadi salah satu alasan mengapa sepatu ini digemari lintas generasi. Produk ini terinspirasi oleh sejarah dan budaya olahraga, musik, dan pastinya fashion yang dijadikan sepasang sepatu yang klasik dan berkualitas dan di pakai di kalangan manapun.Adidas ini cocok digunakan pada saat berolahraga,coffe shop dan santai. Biasanya sering digunakan dikalangan remaja hingga orang tua sekalipun. cocok digunakan di kalangan usia muda maupun tua. Sol karet memberikan daya cengkeram yang baik. Detail tambahan yang terinspirasi oleh sejarah klub menambah nilai koleksi bagi penggemar Liverpool.
+              <a
+                href="https://wa.me/+6289665763920"
+                target="_blank"
+                class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+              >
+                Klik Beli Disini
+              </a>
+            </p>
+          </div>
+
+          <!-- Product Sepatu 4 -->
+          <div class="bg-white shadow-lg rounded-lg p-4">
+            <img
+              src="img/foto4.jpg"
+              alt="Product 4"
+              class="w-full h-48 object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+              onclick="openModal(this.src)"
+            />
+            <h3 class="mt-4 text-xl font-bold text-blue-800">
+              Adidas Munchen Series
+            </h3>
+            <p class="mt-2 text-gray-500">
+              Salah satu Produk Adidas yang paling terkenal adalah sepatu, contohnya adalah Adidas Spezial yang kini banyak sekali digemari oleh orang orang dari anak anak, dewasa hingga orang tua karena desain yang klasik menjadi salah satu alasan mengapa sepatu ini digemari lintas generasi. Produk ini terinspirasi oleh sejarah dan budaya olahraga, musik, dan pastinya fashion yang dijadikan sepasang sepatu yang klasik dan berkualitas dan di pakai di kalangan manapun.Adidas ini cocok digunakan pada saat berolahraga,coffe shop dan santai. Biasanya sering digunakan dikalangan remaja hingga orang tua sekalipun. cocok digunakan di kalangan usia muda maupun tua. Sol karet memberikan daya cengkeram yang baik. Detail tambahan yang terinspirasi oleh sejarah klub menambah nilai koleksi bagi penggemar Liverpool.
+              <a
+                href="https://wa.me/+6289665763920"
+                target="_blank"
+                class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+              >
+                Klik Beli Disini
+              </a>
+            </p>
+          </div>
+
+          <!-- Product 5 -->
+          <div class="bg-white shadow-lg rounded-lg p-4">
+            <img
+              src="img/foto5.jpg"
+              alt="Product 5"
+              class="w-full h-48 object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+              onclick="openModal(this.src)"
+            />
+            <h3 class="mt-4 text-xl font-bold text-blue-800">
+              Adidas Busenitz Series
+            </h3>
+            <p class="mt-2 text-gray-500">
+              Salah satu Produk Adidas yang paling terkenal adalah sepatu, contohnya adalah Adidas Spezial yang kini banyak sekali digemari oleh orang orang dari anak anak, dewasa hingga orang tua karena desain yang klasik menjadi salah satu alasan mengapa sepatu ini digemari lintas generasi. Produk ini terinspirasi oleh sejarah dan budaya olahraga, musik, dan pastinya fashion yang dijadikan sepasang sepatu yang klasik dan berkualitas dan di pakai di kalangan manapun.Adidas ini cocok digunakan pada saat berolahraga,coffe shop dan santai. Biasanya sering digunakan dikalangan remaja hingga orang tua sekalipun. cocok digunakan di kalangan usia muda maupun tua. Sol karet memberikan daya cengkeram yang baik. Detail tambahan yang terinspirasi oleh sejarah klub menambah nilai koleksi bagi penggemar Liverpool.
+              <a
+                href="https://wa.me/+6289665763920"
+                target="_blank"
+                class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+              >
+                Klik Beli Disini
+              </a>
+            </p>
+          </div>
+
+          <!-- Product 6 -->
+          <div class="bg-white shadow-lg rounded-lg p-4">
+            <img
+              src="img/foto6.jpg"
+              alt="Product 6"
+              class="w-full h-48 object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+              onclick="openModal(this.src)"
+            />
+            <h3 class="mt-4 text-xl font-bold text-blue-800">
+              Adidas Spezial Series
+            </h3>
+            <p class="mt-2 text-gray-500">
+              Salah satu Produk Adidas yang paling terkenal adalah sepatu, contohnya adalah Adidas Spezial yang kini banyak sekali digemari oleh orang orang dari anak anak, dewasa hingga orang tua karena desain yang klasik menjadi salah satu alasan mengapa sepatu ini digemari lintas generasi. Produk ini terinspirasi oleh sejarah dan budaya olahraga, musik, dan pastinya fashion yang dijadikan sepasang sepatu yang klasik dan berkualitas dan di pakai di kalangan manapun.Adidas ini cocok digunakan pada saat berolahraga,coffe shop dan santai. Biasanya sering digunakan dikalangan remaja hingga orang tua sekalipun. cocok digunakan di kalangan usia muda maupun tua. Sol karet memberikan daya cengkeram yang baik. Detail tambahan yang terinspirasi oleh sejarah klub menambah nilai koleksi bagi penggemar Liverpool.
+              <a
+                href="https://wa.me/+6289665763920"
+                target="_blank"
+                class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+              >
+                Klik Beli Disini
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Jacket Section -->
+    <section id="Produk" class="bg-gray-50 py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <p class="mt-4 text-gray-500 text-center text-2xl">Jacket Casual</p>
+        <div class="mt-8 grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          <!-- Product 1 -->
+          <div class="bg-white shadow-lg rounded-lg p-4 flex flex-col h-full">
+            <img
+                src="img/jaket1.jpg"
+                alt="Jaket 1"
+                class="w-full h-248px object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+                onclick="openModal(this.src)"
+              />
+            <h3 class="mt-4 text-xl font-bold text-blue-800">Company Series</h3>
+            <p class="mt-2 text-gray-500">
+              C.P. Company Series adalah lini produk dari merek pakaian Italia
+              C.P. Company, yang mengkhususkan diri dalam teknologi garment dyed
+              sejak 1971. Seri ini, terutama Metropolis Series, dirancang untuk
+              sepenuhnya beradaptasi dengan lingkungan perkotaan, dengan fokus
+              pada fungsionalitas, inovasi teknologi, dan desain mutakhir.
+              Proses desain merek ini dipengaruhi oleh arsip pakaian yang
+              substansial, yang digunakan untuk melakukan penelitian tentang
+              pakaian militer, industri, atau utilitarian dan reinterpretasi
+              detail desain mereka untuk menginformasikan hasil desain baru.
+            </p>
+            <a
+              href="https://wa.me/+6289665763920"
+              target="_blank"
+              class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+            >
+              Klik Beli Disini
+            </a>
+          </div>
+
+          <!-- Product 2 -->
+          <div class="bg-white shadow-lg rounded-lg p-4">
+            <img
+                src="img/jaket2.jpg"
+                alt="Jaket 2"
+                class="w-full h-248px object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+                onclick="openModal(this.src)"
+            />
+            <h3 class="mt-4 text-xl font-bold text-blue-800">Company Series</h3>
+            <p class="mt-2 text-gray-500">
+              C.P. Company Series adalah lini produk dari merek pakaian Italia
+              C.P. Company, yang mengkhususkan diri dalam teknologi garment dyed
+              sejak 1971. Seri ini, terutama Metropolis Series, dirancang untuk
+              sepenuhnya beradaptasi dengan lingkungan perkotaan, dengan fokus
+              pada fungsionalitas, inovasi teknologi, dan desain mutakhir.
+              Proses desain merek ini dipengaruhi oleh arsip pakaian yang
+              substansial, yang digunakan untuk melakukan penelitian tentang
+              pakaian militer, industri, atau utilitarian dan reinterpretasi
+              detail desain mereka untuk menginformasikan hasil desain baru.
+            </p>
+            <a
+              href="https://wa.me/+6289665763920"
+              target="_blank"
+              class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+            >
+              Klik Beli Disini
+            </a>
+          </div>
+
+          <!-- Product 3 -->
+          <div class="bg-white shadow-lg rounded-lg p-4">
+            <img
+                src="img/jaket3.jpg"
+                alt="Jaket 3"
+                class="w-full h-248px object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+                onclick="openModal(this.src)"
+            />
+            <h3 class="mt-4 text-xl font-bold text-blue-800">Company Series</h3>
+            <p class="mt-2 text-gray-500">
+              C.P. Company Series adalah lini produk dari merek pakaian Italia
+              C.P. Company, yang mengkhususkan diri dalam teknologi garment dyed
+              sejak 1971. Seri ini, terutama Metropolis Series, dirancang untuk
+              sepenuhnya beradaptasi dengan lingkungan perkotaan, dengan fokus
+              pada fungsionalitas, inovasi teknologi, dan desain mutakhir.
+              Proses desain merek ini dipengaruhi oleh arsip pakaian yang
+              substansial, yang digunakan untuk melakukan penelitian tentang
+              pakaian militer, industri, atau utilitarian dan reinterpretasi
+              detail desain mereka untuk menginformasikan hasil desain baru.</p>
+            <a
+              href="https://wa.me/+6289665763920"
+              target="_blank"
+              class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+            >
+              Klik Beli Disini
+            </a>
+          </div>
+          <!-- Product 4-->
+          <div class="bg-white shadow-lg rounded-lg p-4">
+            <img
+                src="img/jaket4.jpg"
+                alt="Jaket 4"
+                class="w-full h-248px object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+                onclick="openModal(this.src)"
+              />
+            <h3 class="mt-4 text-xl font-bold text-blue-800">Company Series</h3>
+            <p class="mt-2 text-gray-500">
+              C.P. Company Series adalah lini produk dari merek pakaian Italia C.P. Company, yang mengkhususkan diri dalam teknologi garment dyed sejak 1971. Seri ini, terutama Metropolis Series, dirancang untuk sepenuhnya beradaptasi dengan lingkungan perkotaan, dengan fokus pada fungsionalitas, inovasi teknologi, dan desain mutakhir. Proses desain merek ini dipengaruhi oleh arsip pakaian yang substansial, yang digunakan untuk melakukan penelitian tentang pakaian militer, industri, atau utilitarian dan reinterpretasi detail desain mereka untuk menginformasikan hasil desain baru. desain yang elegan dan cocok dikalangan manapun. cocok di kalangan remaja
+            </p>
+            <a
+              href="https://wa.me/+6289665763920"
+              target="_blank"
+              class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+            >
+              Klik Beli Disini
+            </a>
+          </div>
+          <!-- Product 5-->
+          <div class="bg-white shadow-lg rounded-lg p-4">
+            <img
+                src="img/jaket5.jpg"
+                alt="Jaket 5"
+                class="w-full h-248px object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+                onclick="openModal(this.src)"
+              />
+            <h3 class="mt-4 text-xl font-bold text-blue-800">Company Series</h3>
+            <p class="mt-2 text-gray-500">
+              C.P. Company Series adalah lini produk dari merek pakaian Italia C.P. Company, yang mengkhususkan diri dalam teknologi garment dyed sejak 1971. Seri ini, terutama Metropolis Series, dirancang untuk sepenuhnya beradaptasi dengan lingkungan perkotaan, dengan fokus pada fungsionalitas, inovasi teknologi, dan desain mutakhir. Proses desain merek ini dipengaruhi oleh arsip pakaian yang substansial, yang digunakan untuk melakukan penelitian tentang pakaian militer, industri, atau utilitarian dan reinterpretasi detail desain mereka untuk menginformasikan hasil desain baru. desain yang elegan dan cocok dikalangan manapun.
+            </p>
+            <a
+              href="https://wa.me/+6289665763920"
+              target="_blank"
+              class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+            >
+              Klik Beli Disini
+            </a>
+          </div>
+          <!-- Product 6-->
+          <div class="bg-white shadow-lg rounded-lg p-4">
+            <img
+                src="img/jaket6.jpg"
+                alt="Jaket 6"
+                class="w-full h-248px object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+                onclick="openModal(this.src)"
+              />
+            <h3 class="mt-4 text-xl font-bold text-blue-800">
+              Stone Island Series
+            </h3>
+            <p class="mt-2 text-gray-500">
+              Stone Island adalah merek pakaian asal Italia yang didirikan pada
+              tahun 1982 oleh Massimo Osti, yang dikenal karena inovasi
+              material, desain fungsional, dan estetika yang unik. Filosofi
+              merek ini berpusat pada eksplorasi tanpa henti terhadap bahan dan
+              teknik produksi. Stone Island dikenal menggunakan kain inovatif,
+              seperti material reflektif, tahan air, hingga hasil pewarnaan
+              khusus yang dilakukan dengan metode canggih untuk menciptakan
+              warna-warna unik. Hasilnya adalah pakaian dengan performa tinggi
+              yang tetap mempertahankan tampilan kontemporer dan gaya
+              street-ready. cocok di kalangan remaja hingga tua.
+            </p>
+            <a
+              href="https://wa.me/+6289665763920"
+              target="_blank"
+              class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+            >
+              Klik Beli Disini
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Section Polo -->
+    <section id="Produk" class="bg-gray-50 py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <p class="mt-4 text-gray-500 text-center text-2xl">Polo Shirt</p>
+        <div class="mt-8 grid gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+          <!-- Product 1 -->
+          <div class="bg-white shadow-lg rounded-lg p-4">
+            <img
+                src="img/polo1.jpg"
+                alt="polo 1"
+                class="w-full h-248px object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+                onclick="openModal(this.src)"/>
+            <h3 class="mt-4 text-xl font-bold text-blue-800">
+              Polo Fred Perry
+            </h3>
+            <p class="mt-2 text-gray-500">
+              Stone Island adalah merek pakaian asal Italia yang didirikan pada
+              tahun 1982 oleh Massimo Osti, yang dikenal karena inovasi
+              material, desain fungsional, dan estetika yang unik. Filosofi
+              merek ini berpusat pada eksplorasi tanpa henti terhadap bahan dan
+              teknik produksi. Stone Island dikenal menggunakan kain inovatif,
+              seperti material reflektif, tahan air, hingga hasil pewarnaan
+              khusus yang dilakukan dengan metode canggih untuk menciptakan
+              warna-warna unik. Hasilnya adalah pakaian dengan performa tinggi
+              yang tetap mempertahankan tampilan kontemporer dan gaya
+              street-ready.
+            </p>
+            <a
+              href="https://wa.me/+6289665763920"
+              target="_blank"
+              class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+            >
+              Klik Beli Disini
+            </a>
+          </div>
+
+          <!-- Product 2 -->
+          <div class="bg-white shadow-lg rounded-lg p-4">
+            <img
+                src="img/polo2.jpg"
+                alt="polo 2"
+                class="w-full h-248px object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+                onclick="openModal(this.src)"
+            />
+            <h3 class="mt-4 text-xl font-bold text-blue-800">
+              Polo Fred Perry
+            </h3>
+            <p class="mt-2 text-gray-500">
+              Stone Island adalah merek pakaian asal Italia yang didirikan pada
+              tahun 1982 oleh Massimo Osti, yang dikenal karena inovasi
+              material, desain fungsional, dan estetika yang unik. Filosofi
+              merek ini berpusat pada eksplorasi tanpa henti terhadap bahan dan
+              teknik produksi. Stone Island dikenal menggunakan kain inovatif,
+              seperti material reflektif, tahan air, hingga hasil pewarnaan
+              khusus yang dilakukan dengan metode canggih untuk menciptakan
+              warna-warna unik. Hasilnya adalah pakaian dengan performa tinggi
+              yang tetap mempertahankan tampilan kontemporer dan gaya
+              street-ready.
+            </p>
+            <a
+              href="https://wa.me/+6289665763920"
+              target="_blank"
+              class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+            >
+              Klik Beli Disini
+            </a>
+          </div>
+
+          <!-- Product 3 -->
+          <div class="bg-white shadow-lg rounded-lg p-4">
+            <img
+                src="img/polo3.jpg"
+                alt="polo 3"
+                class="w-full h-248px object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+                onclick="openModal(this.src)"
+            />
+            <h3 class="mt-4 text-xl font-bold text-blue-800">
+              Polo Fred Perry
+            </h3>
+            <p class="mt-2 text-gray-500">
+              Stone Island adalah merek pakaian asal Italia yang didirikan pada
+              tahun 1982 oleh Massimo Osti, yang dikenal karena inovasi
+              material, desain fungsional, dan estetika yang unik. Filosofi
+              merek ini berpusat pada eksplorasi tanpa henti terhadap bahan dan
+              teknik produksi. Stone Island dikenal menggunakan kain inovatif,
+              seperti material reflektif, tahan air, hingga hasil pewarnaan
+              khusus yang dilakukan dengan metode canggih untuk menciptakan
+              warna-warna unik. Hasilnya adalah pakaian dengan performa tinggi
+              yang tetap mempertahankan tampilan kontemporer dan gaya
+              street-ready.
+              <a
+                href="https://wa.me/+6289665763920"
+                target="_blank"
+                class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+              >
+                Klik Beli Disini
+              </a>
+            </p>
+          </div>
+
+          <!-- Product 4 -->
+          <div class="bg-white shadow-lg rounded-lg p-4">
+            <img
+                src="img/polo4.jpg"
+                alt="polo 4"
+                class="w-full h-248px object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+                onclick="openModal(this.src)"
+            />
+            <h3 class="mt-4 text-xl font-bold text-blue-800">
+              Polo Stone Island
+            </h3>
+            <p class="mt-2 text-gray-500">
+              Stone Island adalah merek pakaian asal Italia yang didirikan pada
+              tahun 1982 oleh Massimo Osti, yang dikenal karena inovasi
+              material, desain fungsional, dan estetika yang unik. Filosofi
+              merek ini berpusat pada eksplorasi tanpa henti terhadap bahan dan
+              teknik produksi. Stone Island dikenal menggunakan kain inovatif,
+              seperti material reflektif, tahan air, hingga hasil pewarnaan
+              khusus yang dilakukan dengan metode canggih untuk menciptakan
+              warna-warna unik. Hasilnya adalah pakaian dengan performa tinggi
+              yang tetap mempertahankan tampilan kontemporer dan gaya
+              street-ready.
+            </p>
+            <a
+              href="https://wa.me/+6289665763920"
+              target="_blank"
+              class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+            >
+              Klik Beli Disini
+            </a>
+          </div>
+
+          <!-- Product 5 -->
+          <div class="bg-white shadow-lg rounded-lg p-4">
+            <img
+                src="img/polo5.jpg"
+                alt="polo 5"
+                class="w-full h-248px object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+                onclick="openModal(this.src)"
+            />
+            <h3 class="mt-4 text-xl font-bold text-blue-800">
+              Polo Stone Island
+            </h3>
+            <p class="mt-2 text-gray-500">
+              Stone Island adalah merek pakaian asal Italia yang didirikan pada
+              tahun 1982 oleh Massimo Osti, yang dikenal karena inovasi
+              material, desain fungsional, dan estetika yang unik. Filosofi
+              merek ini berpusat pada eksplorasi tanpa henti terhadap bahan dan
+              teknik produksi. Stone Island dikenal menggunakan kain inovatif,
+              seperti material reflektif, tahan air, hingga hasil pewarnaan
+              khusus yang dilakukan dengan metode canggih untuk menciptakan
+              warna-warna unik. Hasilnya adalah pakaian dengan performa tinggi
+              yang tetap mempertahankan tampilan kontemporer dan gaya
+              street-ready.
+            </p>
+            <a
+              href="https://wa.me/+6289665763920"
+              target="_blank"
+              class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+            >
+              Klik Beli Disini
+            </a>
+          </div>
+
+          <!-- Product 6 -->
+          <div class="bg-white shadow-lg rounded-lg p-4">
+            <img
+                src="img/polo6.jpg"
+                alt="polo 6"
+                class="w-full h-248px object-cover rounded-t-lg border-4 border-blue-500 transition duration-300 hover:scale-105 hover:border-blue-700 cursor-pointer"
+                onclick="openModal(this.src)"
+            />
+            <h3 class="mt-4 text-xl font-bold text-blue-800">
+              Polo Fred Perry
+            </h3>
+            <p class="mt-2 text-gray-500">
+              Stone Island adalah merek pakaian asal Italia yang didirikan pada
+              tahun 1982 oleh Massimo Osti, yang dikenal karena inovasi
+              material, desain fungsional, dan estetika yang unik. Filosofi
+              merek ini berpusat pada eksplorasi tanpa henti terhadap bahan dan
+              teknik produksi. Stone Island dikenal menggunakan kain inovatif,
+              seperti material reflektif, tahan air, hingga hasil pewarnaan
+              khusus yang dilakukan dengan metode canggih untuk menciptakan
+              warna-warna unik. Hasilnya adalah pakaian dengan performa tinggi
+              yang tetap mempertahankan tampilan kontemporer dan gaya
+              street-ready.
+            </p>
+            <a
+              href="https://wa.me/+6289665763920"
+              target="_blank"
+              class="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg hover:bg-blue-600 text-center inline-block"
+            >
+              Klik Beli Disini
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="Layanan" class="bg-white py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-blue-800 text-center">
+          Layanan Yang Tersedia
+        </h2>
+        <p class="mt-4 text-gray-500 text-center"></p>
+        <div class="mt-8 flex justify-center space-x-4">
+          <a
+            href="https://shopee.co.id/arkosecond.id"
+            target="_blank"
+            class="nav-link bg-orange-800 text-white py-2 px-4 rounded-lg hover:bg-red-600 flex items-center"
+          >
+            <img src="img/logo shope.png" alt="Shopee" class="h-6 mr-2" />
+            Shopee
+          </a>
+          <a
+            href="https://www.instagram.com/putraanaufallll_"
+            target="_blank"
+            class="nav-link bg-pink-500 text-white py-2 px-4 rounded-lg hover:bg-pink-600 flex items-center"
+          >
+            <img src="img/logo ig.png" alt="Instagram" class="h-6 mr-2" />
+            Instagram
+          </a>
+          <a
+            href="https://wa.me/+6285691735045"
+            target="_blank"
+            class="nav-link bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 flex items-center"
+          >
+            <img src="img/logo wa.png" alt="WhatsApp" class="h-6 mr-2" />
+            WhatsApp
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="Tentang Kami" class="bg-gray-50 py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-bold text-blue-800 text-center">Tentang</h2>
+        <p class="mt-4 text-gray-500 text-center">
+          Kepuasaan costumer adalah prioritas utama kami
+        </p>
+
+        <!-- Google Maps Embed -->
+        <div class="mt-8">
+          <h3 class="text-xl font-semibold text-blue-800 text-center">
+            Lokasi
+          </h3>
+        <div class="max-w-4xl mx-auto p-4">
+          <div class="rounded-lg border-4 border-blue-500 shadow-lg shadow-blue-500/50">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.835434509051!2d107.1665801!3d-6.3246117!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e699b0c08ad8d01%3A0x2b18001d1b1371f9!2sUNIVERSITAS+PELITA+BANGSA!5e0!3m2!1sid!2sid!4v1631287971472!5m2!1sid!2sid"
+              width="100%"
+              height="450"
+              style="border:0;"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              class="rounded-md"
+          ></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+        <!-- Email Display -->
+        <div class="mt-8 text-center">
+          <p class="text-gray-500">
+            Email:
+            <a
+              href="mailto:Joutpit@gmail.com"
+              class="text-blue-800 hover:underline"
+            >
+              Joupit@gmail.com
+            </a>
+          </p>
+        </div>
+      </div>
+    </section>
+    <script>
+      function toggleMenu() {
+        const mobileMenu = document.getElementById("mobile-menu");
+        mobileMenu.classList.toggle("active");
+      }
+    </script>
+  </body>
+</html>

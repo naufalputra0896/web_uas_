@@ -1,0 +1,20 @@
+{
+  "name": "joupit/webstore",
+  "description": "Joupit Webstore - Simple PHP Webstore Project",
+  "type": "project",
+  "require": {
+    "php": ">=7.4",
+    "vlucas/phpdotenv": "^5.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Joupit Team",
+      "email": "joupit@gmail.com"
+    }
+  ]
+}

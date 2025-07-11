@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gantt Chart Pengembangan Website Joupit</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+        min-height: 100vh;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #2c3e50, #3498db);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.2em;
+        margin-bottom: 10px;
+        font-weight: 300;
+      }
+
+      .header p {
+        opacity: 0.9;
+        font-size: 1.1em;
+      }
+
+      .gantt-container {
+        padding: 30px;
+        overflow-x: auto;
+      }
+
+      .gantt-chart {
+        min-width: 900px;
+        border-collapse: collapse;
+        width: 100%;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .gantt-chart th {
+        background: linear-gradient(135deg, #34495e, #2c3e50);
+        color: white;
+        padding: 15px 10px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 0.9em;
+        letter-spacing: 0.5px;
+      }
+
+      .gantt-chart td {
+        padding: 12px 10px;
+        border-bottom: 1px solid #ecf0f1;
+        text-align: center;
+        font-size: 0.85em;
+      }
+
+      .phase-cell {
+        background: #f8f9fa;
+        font-weight: 600;
+        text-align: left;
+        color: #2c3e50;
+        border-right: 3px solid #3498db;
+      }
+
+      .task-cell {
+        text-align: left;
+        padding-left: 25px;
+        color: #555;
+        font-weight: 500;
+      }
+
+      .duration-cell {
+        font-weight: 600;
+        color: #27ae60;
+      }
+
+      .bar {
+        height: 20px;
+        border-radius: 10px;
+        position: relative;
+        margin: 2px 0;
+        transition: all 0.3s ease;
+      }
+
+      .bar:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .phase1 {
+        background: linear-gradient(135deg, #ff7675, #fd79a8);
+      }
+      .phase2 {
+        background: linear-gradient(135deg, #74b9ff, #0984e3);
+      }
+      .phase3 {
+        background: linear-gradient(135deg, #00b894, #00cec9);
+      }
+      .phase4 {
+        background: linear-gradient(135deg, #fdcb6e, #e17055);
+      }
+      .phase5 {
+        background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+      }
+      .phase6 {
+        background: linear-gradient(135deg, #fd79a8, #e84393);
+      }
+      .phase7 {
+        background: linear-gradient(135deg, #55a3ff, #003d82);
+      }
+
+      .phase-row {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        font-weight: bold;
+        color: #2c3e50;
+      }
+
+      .legend {
+        margin-top: 30px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        justify-content: center;
+      }
+
+      .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 15px;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        font-size: 0.85em;
+        font-weight: 500;
+      }
+
+      .legend-color {
+        width: 20px;
+        height: 12px;
+        border-radius: 6px;
+      }
+
+      .summary {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        padding: 25px;
+        margin-top: 20px;
+        border-radius: 15px;
+        text-align: center;
+      }
+
+      .summary h3 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 1.3em;
+      }
+
+      .stats {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .stat-item {
+        background: white;
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        min-width: 120px;
+      }
+
+      .stat-number {
+        font-size: 1.8em;
+        font-weight: bold;
+        color: #3498db;
+      }
+
+      .stat-label {
+        font-size: 0.9em;
+        color: #7f8c8d;
+        margin-top: 5px;
+      }
+
+      @media (max-width: 768px) {
+        .gantt-container {
+          padding: 15px;
+        }
+
+        .header h1 {
+          font-size: 1.8em;
+        }
+
+        .stats {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Gantt Chart Pengembangan Website Joupit</h1>
+        <p>Timeline dan Jadwal Pengembangan Sistem</p>
+      </div>
+
+      <div class="gantt-container">
+        <table class="gantt-chart">
+          <thead>
+            <tr>
+              <th style="width: 200px">Fase Pengembangan</th>
+              <th style="width: 250px">Kegiatan</th>
+              <th style="width: 80px">Durasi</th>
+              <th style="width: 400px">Timeline (Hari ke-)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Fase 1: Analisis & Perencanaan -->
+            <tr class="phase-row">
+              <td class="phase-cell" rowspan="4">Analisis & Perencanaan</td>
+              <td class="task-cell">Analisis Kebutuhan</td>
+              <td class="duration-cell">3 hari</td>
+              <td>
+                <div
+                  class="bar phase1"
+                  style="width: 60px; margin-left: 0px"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="task-cell">Desain UI/UX</td>
+              <td class="duration-cell">5 hari</td>
+              <td>
+                <div
+                  class="bar phase1"
+                  style="width: 60px; margin-left: 60px"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="task-cell">Perencanaan Database</td>
+              <td class="duration-cell">7 hari</td>
+              <td>
+                <div
+                  class="bar phase1"
+                  style="width: 100px; margin-left: 120px"
+                ></div>
+              </td>
+            </tr>
+            <tr style="border-bottom: 3px solid #ecf0f1">
+              <td
+                class="phase-cell"
+                style="text-align: center; font-weight: bold; color: #e74c3c"
+              >
+                Total: 15 hari
+              </td>
+              <td></td>
+              <td>
+                <div
+                  class="bar phase1"
+                  style="width: 250px; margin-left: 0px; opacity: 0.7"
+                ></div>
+              </td>
+            </tr>
+
+            <!-- Fase 2: Frontend Development -->
+            <tr class="phase-row">
+              <td class="phase-cell" rowspan="5">Frontend Development</td>
+              <td class="task-cell">Setup HTML Structure</td>
+              <td class="duration-cell">3 hari</td>
+              <td>
+                <div
+                  class="bar phase2"
+                  style="width: 60px; margin-left: 180px"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="task-cell">Implementasi CSS Styling</td>
+              <td class="duration-cell">4 hari</td>
+              <td>
+                <div
+                  class="bar phase2"
+                  style="width: 80px; margin-left: 240px"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="task-cell">JavaScript Functionality</td>
+              <td class="duration-cell">4 hari</td>
+              <td>
+                <div
+                  class="bar phase2"
+                  style="width: 80px; margin-left: 320px"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="task-cell">Responsive Design</td>
+              <td class="duration-cell">4 hari</td>
+              <td>
+                <div
+                  class="bar phase2"
+                  style="width: 80px; margin-left: 400px"
+                ></div>
+              </td>
+            </tr>
+            <tr style="border-bottom: 3px solid #ecf0f1">
+              <td
+                class="phase-cell"
+                style="text-align: center; font-weight: bold; color: #e74c3c"
+              >
+                Total: 15 hari
+              </td>
+              <td></td>
+              <td>
+                <div
+                  class="bar phase2"
+                  style="width: 300px; margin-left: 180px; opacity: 0.7"
+                ></div>
+              </td>
+            </tr>
+
+            <!-- Fase 3: Backend Development -->
+            <tr class="phase-row">
+              <td class="phase-cell" rowspan="4">Backend Development</td>
+              <td class="task-cell">Setup PHP Session System</td>
+              <td class="duration-cell">2 hari</td>
+              <td>
+                <div
+                  class="bar phase3"
+                  style="width: 40px; margin-left: 480px"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="task-cell">Login Authentication</td>
+              <td class="duration-cell">3 hari</td>
+              <td>
+                <div
+                  class="bar phase3"
+                  style="width: 60px; margin-left: 520px"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="task-cell">Form Handling</td>
+              <td class="duration-cell">2 hari</td>
+              <td>
+                <div
+                  class="bar phase3"
+                  style="width: 40px; margin-left: 580px"
+                ></div>
+              </td>
+            </tr>
+            <tr style="border-bottom: 3px solid #ecf0f1">
+              <td
+                class="phase-cell"
+                style="text-align: center; font-weight: bold; color: #e74c3c"
+              >
+                Total: 7 hari
+              </td>
+              <td></td>
+              <td>
+                <div
+                  class="bar phase3"
+                  style="width: 140px; margin-left: 480px; opacity: 0.7"
+                ></div>
+              </td>
+            </tr>
+
+            <!-- Fase 4: Content Management -->
+            <tr class="phase-row">
+              <td class="phase-cell" rowspan="4">Content Management</td>
+              <td class="task-cell">Product Catalog Setup</td>
+              <td class="duration-cell">3 hari</td>
+              <td>
+                <div
+                  class="bar phase4"
+                  style="width: 60px; margin-left: 620px"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="task-cell">Image Gallery Integration</td>
+              <td class="duration-cell">3 hari</td>
+              <td>
+                <div
+                  class="bar phase4"
+                  style="width: 60px; margin-left: 680px"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="task-cell">Contact Information Setup</td>
+              <td class="duration-cell">3 hari</td>
+              <td>
+                <div
+                  class="bar phase4"
+                  style="width: 60px; margin-left: 740px"
+                ></div>
+              </td>
+            </tr>
+            <tr style="border-bottom: 3px solid #ecf0f1">
+              <td
+                class="phase-cell"
+                style="text-align: center; font-weight: bold; color: #e74c3c"
+              >
+                Total: 9 hari
+              </td>
+              <td></td>
+              <td>
+                <div
+                  class="bar phase4"
+                  style="width: 180px; margin-left: 620px; opacity: 0.7"
+                ></div>
+              </td>
+            </tr>
+
+            <!-- Fase 5: Integration & Testing -->
+            <tr class="phase-row">
+              <td class="phase-cell" rowspan="4">Integration & Testing</td>
+              <td class="task-cell">Cross-browser Testing</td>
+              <td class="duration-cell">3 hari</td>
+              <td>
+                <div
+                  class="bar phase5"
+                  style="width: 60px; margin-left: 800px"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="task-cell">Mobile Responsiveness Test</td>
+              <td class="duration-cell">4 hari</td>
+              <td>
+                <div
+                  class="bar phase5"
+                  style="width: 80px; margin-left: 860px"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="task-cell">Security Testing</td>
+              <td class="duration-cell">3 hari</td>
+              <td>
+                <div
+                  class="bar phase5"
+                  style="width: 60px; margin-left: 940px"
+                ></div>
+              </td>
+            </tr>
+            <tr style="border-bottom: 3px solid #ecf0f1">
+              <td
+                class="phase-cell"
+                style="text-align: center; font-weight: bold; color: #e74c3c"
+              >
+                Total: 10 hari
+              </td>
+              <td></td>
+              <td>
+                <div
+                  class="bar phase5"
+                  style="width: 200px; margin-left: 800px; opacity: 0.7"
+                ></div>
+              </td>
+            </tr>
+
+            <!-- Fase 6: Deployment & Launch -->
+            <tr class="phase-row">
+              <td class="phase-cell" rowspan="5">Deployment & Launch</td>
+              <td class="task-cell">Server Setup</td>
+              <td class="duration-cell">1 hari</td>
+              <td>
+                <div
+                  class="bar phase6"
+                  style="width: 130px; margin-left: 1000px"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="task-cell">Domain Configuration</td>
+              <td class="duration-cell">1 hari</td>
+              <td>
+                <div
+                  class="bar phase6"
+                  style="width: 140px; margin-left: 1020px"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="task-cell">SSL Certificate Setup</td>
+              <td class="duration-cell">1 hari</td>
+              <td>
+                <div
+                  class="bar phase6"
+                  style="width: 150px; margin-left: 1040px"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="task-cell">Go Live</td>
+              <td class="duration-cell">2 hari</td>
+              <td>
+                <div
+                  class="bar phase6"
+                  style="width: 100px; margin-left: 1060px"
+                ></div>
+              </td>
+            </tr>
+            <tr style="border-bottom: 3px solid #ecf0f1">
+              <td
+                class="phase-cell"
+                style="text-align: center; font-weight: bold; color: #e74c3c"
+              >
+                Total: 5 hari
+              </td>
+              <td></td>
+              <td>
+                <div
+                  class="bar phase6"
+                  style="width: 100px; margin-left: 1000px; opacity: 0.7"
+                ></div>
+              </td>
+            </tr>
+
+            <!-- Fase 7: Maintenance -->
+            <tr class="phase-row">
+              <td class="phase-cell" rowspan="4">Performance & Maintenance</td>
+              <td class="task-cell">Bug Fixes</td>
+              <td class="duration-cell">Ongoing</td>
+              <td>
+                <div
+                  class="bar phase7"
+                  style="width: 100px; margin-left: 1100px"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="task-cell">Performance Optimization</td>
+              <td class="duration-cell">Ongoing</td>
+              <td>
+                <div
+                  class="bar phase7"
+                  style="width: 100px; margin-left: 1100px"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td class="task-cell">Content Updates</td>
+              <td class="duration-cell">Ongoing</td>
+              <td>
+                <div
+                  class="bar phase7"
+                  style="width: 100px; margin-left: 1100px"
+                ></div>
+              </td>
+            </tr>
+            <tr>
+              <td
+                class="phase-cell"
+                style="text-align: center; font-weight: bold; color: #e74c3c"
+              >
+                Berkelanjutan
+              </td>
+              <td></td>
+              <td>
+                <div
+                  class="bar phase7"
+                  style="width: 100px; margin-left: 1100px; opacity: 0.7"
+                ></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-color phase1"></div>
+            <span>Analisis & Perencanaan</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color phase2"></div>
+            <span>Frontend Development</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color phase3"></div>
+            <span>Backend Development</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color phase4"></div>
+            <span>Content Management</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color phase5"></div>
+            <span>Integration & Testing</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color phase6"></div>
+            <span>Deployment & Launch</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color phase7"></div>
+            <span>Maintenance</span>
+          </div>
+        </div>
+
+        <div class="summary">
+          <h3>Ringkasan Pengembangan</h3>
+          <div class="stats">
+            <div class="stat-item">
+              <div class="stat-number">61</div>
+              <div class="stat-label">Total Hari</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">7</div>
+              <div class="stat-label">Fase Utama</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">20</div>
+              <div class="stat-label">Kegiatan</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">100%</div>
+              <div class="stat-label">Completion</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
